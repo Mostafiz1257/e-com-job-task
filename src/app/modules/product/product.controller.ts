@@ -1,84 +1,88 @@
 import { Request, Response } from 'express';
-import { productService } from './product.service';
-import { TProduct } from './product.interface';
+import ProductValidationSchema from './product.validation';
+import { productServices } from './product.service';
 
 const createProduct = async (req: Request, res: Response) => {
   try {
-    // const product: TProduct = req.body;
-    const { product: productData } = req.body;
-    const result = await productService.createProductIntoDB(productData);
-    res.status(200).json({
-      success: true,
-      message: 'Product created successfully',
-      data: result,
-    });
+    const validatedProduct = ProductValidationSchema.parse(req.body);
+    const newProduct = await productServices.createProduct(validatedProduct);
+    res.status(201).json({ message: 'Product created successfully', product: newProduct });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to create new data',
-      error: error,
-    });
+    res.status(400).json({ message: error.message });
   }
 };
 
-//Get All product from DB
-const getAllProduct = async (req: Request, res: Response) => {
+const getAllProducts = async (req: Request, res: Response) => {
   try {
-    const result = await productService.getAllProductsFromDB();
-    res.status(200).json({
-      success: true,
-      message: 'Successfully get all products',
-      data: { result },
-    });
-  } catch (error) {}
+    const products = await productServices.getProducts();
+    res.status(200).json({ message: 'Products retrieved successfully', products });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-//Get a single product by ID
 const getSingleProduct = async (req: Request, res: Response) => {
   try {
-    const { productId } = req.params;
-    const result = await productService.getSingleProductFromDB(productId);
-    res.status(200).json({
-      success: true,
-      message: 'Successfully get the product Data',
-      data: result,
-    });
+    const product = await productServices.getProductById(req.params.productId);
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.status(200).json({ message: 'Product retrieved successfully', product });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to get the product Data',
-      error: error,
-    });
+    res.status(500).json({ message: error.message });
   }
 };
 
-//Update a product
 const updateProduct = async (req: Request, res: Response) => {
   try {
-    const { productId } = req.params;
-    const   updateData  = req.body;
-    const result =await productService.updateProductFromDB(productId, updateData);
-    
-    if (result) {
-        res.status(200).json({
-          success: true,
-          message: 'Product updated successfully',
-          data: result,
-        })
-  }
-}
-  catch (error) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update data',
-      error: error,
-    });
+    const validatedProduct = ProductValidationSchema.partial().parse(req.body);
+    const updatedProduct = await productServices.updateProduct(req.params.productId, validatedProduct);
+    if (!updatedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
   }
 };
 
-export const ProductController = {
+const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const deletedProduct = await productServices.deleteProduct(req.params.productId);
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.status(200).json({ message: 'Product deleted successfully', product: deletedProduct });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getFeaturedProducts = async (req: Request, res: Response) => {
+  try {
+    const featuredProducts = await productServices.getFeaturedProducts();
+    res.status(200).json({ message: 'Featured products retrieved successfully', products: featuredProducts });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const searchAndFilterProducts = async (req: Request, res: Response) => {
+  try {
+    const { searchQuery, filters } = req.body;
+    const products = await productServices.searchAndFilterProducts(searchQuery, filters);
+    res.status(200).json({ message: 'Products retrieved successfully', products });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const productController = {
   createProduct,
-  getAllProduct,
+  getAllProducts,
   getSingleProduct,
   updateProduct,
+  deleteProduct,
+  getFeaturedProducts,
+  searchAndFilterProducts,
 };

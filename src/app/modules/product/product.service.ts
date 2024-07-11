@@ -1,44 +1,52 @@
+
 import { TProduct } from './product.interface';
-import { ProductModel } from './product.model';
-
-//Add a new product
-const createProductIntoDB = async (product: TProduct) => {
-  const result = await ProductModel.create(product);
-  return result;
+import Product from './product.model'
+// Get all products
+export const getProducts = async (): Promise<TProduct[]> => {
+  return await Product.find();
 };
 
-//get all product from DB
-const getAllProductsFromDB = async () => {
-  const result = await ProductModel.find();
-  return result;
+// Create a new product
+export const createProduct = async (productData: TProduct): Promise<TProduct> => {
+  const newProduct = new Product(productData);
+  return await newProduct.save();
 };
 
-//get a single product
-const getSingleProductFromDB = async (id: string) => {
-  const result = await ProductModel.findOne({ _id: id });
-  console.log(result);
-  return result;
+// Get a product by ID
+export const getProductById = async (productId: string): Promise<TProduct | null> => {
+  return await Product.findById(productId).exec();
 };
 
-//update a product
-const updateProductFromDB = async (id: string, updateData: any) => {
-  try {
-    const result = await ProductModel.findByIdAndUpdate(
-      id,
-      { $set: updateData },
-      { new: true, runValidators: true },
-    );
-    return result;
-  } catch (error) {
-    console.log(error);
-  }
+// Update a product
+export const updateProduct = async (productId: string, productData: Partial<TProduct>): Promise<TProduct | null> => {
+  return await Product.findByIdAndUpdate(productId, productData, { new: true }).exec();
 };
 
-//delete a product
+// Delete a product
+export const deleteProduct = async (productId: string): Promise<TProduct | null> => {
+  return await Product.findByIdAndDelete(productId).exec();
+};
 
-export const productService = {
-  createProductIntoDB,
-  getAllProductsFromDB,
-  getSingleProductFromDB,
-  updateProductFromDB,
+// Get featured products (latest 6 products)
+export const getFeaturedProducts = async (): Promise<TProduct[]> => {
+  return await Product.find().sort({ createdAt: -1 }).limit(6).exec();
+};
+
+// Search and filter products
+export const searchAndFilterProducts = async (searchQuery: string, filters: any): Promise<TProduct[]> => {
+  const query = {
+    name: new RegExp(searchQuery, 'i'),
+    ...filters,
+  };
+  return await Product.find(query).exec();
+};
+
+export const productServices = {
+  getProducts,
+  createProduct,
+  getProductById,
+  updateProduct,
+  deleteProduct,
+  getFeaturedProducts,
+  searchAndFilterProducts,
 };
