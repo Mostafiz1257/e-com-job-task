@@ -27,12 +27,12 @@ export const deleteProduct = async (productId: string): Promise<TProduct | null>
   return await Product.findByIdAndDelete(productId).exec();
 };
 
-// Get featured products (latest 6 products)
+
 export const getFeaturedProducts = async (): Promise<TProduct[]> => {
   return await Product.find().sort({ createdAt: -1 }).limit(6).exec();
 };
 
-// Search and filter products
+
 export const searchAndFilterProducts = async (searchQuery: string, filters: any): Promise<TProduct[]> => {
   const query = {
     name: new RegExp(searchQuery, 'i'),
@@ -40,6 +40,24 @@ export const searchAndFilterProducts = async (searchQuery: string, filters: any)
   };
   return await Product.find(query).exec();
 };
+
+
+const decreaseProductQuantity = async (id: string, quantity: number) => {
+  const updatedProduct = await Product.findByIdAndUpdate(
+    id,
+    { $inc: { quantity: -quantity } },
+    { new: true, runValidators: true }
+  );
+
+  if (!updatedProduct) {
+    throw new Error("Product not found");
+  }
+
+  return updatedProduct;
+};
+
+
+
 
 export const productServices = {
   getProducts,
@@ -49,4 +67,5 @@ export const productServices = {
   deleteProduct,
   getFeaturedProducts,
   searchAndFilterProducts,
+  decreaseProductQuantity
 };
