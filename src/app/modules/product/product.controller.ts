@@ -10,7 +10,7 @@ const createProduct = async (req: Request, res: Response) => {
       .status(201)
       .json({ message: 'Product created successfully', product: newProduct });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({  });
   }
 };
 
@@ -21,7 +21,7 @@ const getAllProducts = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: 'Products retrieved successfully', products });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({  });
   }
 };
 
@@ -35,7 +35,7 @@ const getSingleProduct = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: 'Product retrieved successfully', product });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({  });
   }
 };
 
@@ -56,7 +56,7 @@ const updateProduct = async (req: Request, res: Response) => {
         product: updatedProduct,
       });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ });
   }
 };
 
@@ -75,7 +75,7 @@ const deleteProduct = async (req: Request, res: Response) => {
         product: deletedProduct,
       });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({  });
   }
 };
 
@@ -89,7 +89,7 @@ const getFeaturedProducts = async (req: Request, res: Response) => {
         products: featuredProducts,
       });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({  });
   }
 };
 
@@ -104,7 +104,7 @@ const searchAndFilterProducts = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: 'Products retrieved successfully', products });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ });
   }
 };
 
