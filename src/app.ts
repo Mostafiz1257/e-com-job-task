@@ -1,7 +1,6 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
-import { ProductRoutes } from './app/modules/product/product.route';
-import { paymentRoutes } from './app/modules/order/orderRoutes';
+import { AuthRoutes } from './app/modules/auth/auth.route';
 const app: Application = express();
 
 //parser
@@ -9,8 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 
-app.use('/api/products', ProductRoutes);
-app.use('/api/create-checkout-session',paymentRoutes)
+app.use('/api', AuthRoutes);
 
 
 const getAController = (req: Request, res: Response) => {
