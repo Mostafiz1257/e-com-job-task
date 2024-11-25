@@ -1,6 +1,7 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
-import { AuthRoutes } from './app/modules/auth/auth.route';
+import { AuthRouter } from './app/modules/auth/auth.route';
+import { userRouter } from './app/modules/user/user.route';
 const app: Application = express();
 
 //parser
@@ -8,7 +9,8 @@ app.use(express.json());
 app.use(cors());
 
 
-app.use('/api', AuthRoutes);
+app.use('/api', AuthRouter);
+app.use('/api', userRouter);
 
 
 const getAController = (req: Request, res: Response) => {
