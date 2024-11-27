@@ -1,8 +1,11 @@
-import catchAsync from '../../utils/catchAsync';
-import { CartService } from './cart.service';
+import catchAsync from "../../utils/catchAsync";
 
-const getCart = catchAsync(async (req, res) => {
-  const userId = req.user._id; // Assumes authentication middleware adds `req.user`
+
+import { CartService } from "./cart.service";
+
+// Get the user's current cart
+const getUserCart = catchAsync(async (req, res) => {
+  const { userId } = req.params;
   const cart = await CartService.getUserCart(userId);
   res.status(200).json({
     success: true,
@@ -11,45 +14,55 @@ const getCart = catchAsync(async (req, res) => {
   });
 });
 
-const addToCart = catchAsync(async (req, res) => {
-  const userId = req.user._id;
+// Add a product to the cart
+const addProductToCart = catchAsync(async (req, res) => {
+  const { userId } = req.params;
   const { productId, quantity } = req.body;
 
-  const cart = await CartService.addToCart(userId, productId, quantity);
+  if (quantity <= 0) {
+    throw new Error("Quantity must be grather than zero");
+  }
+
+  const updatedCart = await CartService.addProductToCart(userId, productId, quantity);
   res.status(200).json({
     success: true,
     message: 'Product added to cart successfully',
-    data: cart,
+    data: updatedCart,
   });
 });
 
-const updateCart = catchAsync(async (req, res) => {
-  const userId = req.user._id;
-  const { productId, quantity } = req.body;
+// Update product quantity in the cart
+const updateProductQuantity = catchAsync(async (req, res) => {
+  const { userId, productId } = req.params;
+  const { quantity } = req.body;
 
-  const cart = await CartService.updateCartProduct(userId, productId, quantity);
+  if (quantity <= 0) {
+    throw new Error("Quantity must be grather than zero");
+  }
+
+  const updatedCart = await CartService.updateProductQuantity(userId, productId, quantity);
   res.status(200).json({
     success: true,
-    message: 'Cart updated successfully',
-    data: cart,
+    message: 'Product quantity updated successfully',
+    data: updatedCart,
   });
 });
 
-const removeFromCart = catchAsync(async (req, res) => {
-  const userId = req.user._id;
-  const { productId } = req.body;
+// Remove a product from the cart
+const removeProductFromCart = catchAsync(async (req, res) => {
+  const { userId, productId } = req.params;
 
-  const cart = await CartService.removeFromCart(userId, productId);
+  const updatedCart = await CartService.removeProductFromCart(userId, productId);
   res.status(200).json({
     success: true,
     message: 'Product removed from cart successfully',
-    data: cart,
+    data: updatedCart,
   });
 });
 
 export const CartController = {
-  getCart,
-  addToCart,
-  updateCart,
-  removeFromCart,
+  getUserCart,
+  addProductToCart,
+  updateProductQuantity,
+  removeProductFromCart,
 };

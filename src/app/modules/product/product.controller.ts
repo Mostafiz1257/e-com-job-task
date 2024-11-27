@@ -1,28 +1,29 @@
-import catchAsync from '../../utils/catchAsync';
-import { ProductService } from './product.service';
+// controllers/product.controller.ts
+import catchAsync from "../../utils/catchAsync";
+import { ProductService } from "./product.service";
 
-const getAllProducts = catchAsync(async (req, res) => {
-  const products = await ProductService.fetchAllProducts();
+
+// Controller to fetch all products and save them in the database
+const fetchAndSaveAllProducts = catchAsync(async (req, res) => {
+  const products = await ProductService.fetchAndSaveAllProducts();
   res.status(200).json({
     success: true,
-    statusCode: 200,
-    message: 'Products fetched successfully',
+    message: 'Products fetched and saved successfully',
     data: products,
   });
 });
 
-const getProductById = catchAsync(async (req, res) => {
+// Controller to fetch a single product by ID
+const fetchProductById = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const product = await ProductService.fetchProductById(id);
+  const product = await ProductService.fetchProductById(Number(id));
   res.status(200).json({
     success: true,
-    statusCode: 200,
-    message: `Product ${id} fetched successfully`,
     data: product,
   });
 });
 
 export const ProductController = {
-  getAllProducts,
-  getProductById,
+  fetchAndSaveAllProducts,
+  fetchProductById,
 };
