@@ -36,5 +36,8 @@ This is the backend for a mini e-commerce platform built with Node.js and MongoD
 
 2.cd <project-directory>
 
-npm install
-cp .env.example .env
+
+
+3. npm install
+4. .env.example .env
+4. npm run start:dev
