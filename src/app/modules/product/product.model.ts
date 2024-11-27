@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 
 const ProductSchema = new mongoose.Schema({
+
   id: {
     type: Number,
     required: true,

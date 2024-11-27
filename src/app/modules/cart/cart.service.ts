@@ -6,7 +6,7 @@ import { Cart } from "./cart.model";
 // Fetch the current cart for a user
 const getUserCart = async (userId: string) => {
   const cart = await Cart.findOne({ user: userId }).populate('items.productId');
-  return cart || { items: [] }; // Return an empty cart if none exists
+  return cart || { items: [] }; 
 };
 
 // Add a product to the cart

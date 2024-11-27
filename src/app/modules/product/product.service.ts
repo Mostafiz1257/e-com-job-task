@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Product } from './product.model';
 
 
-const fetchAndSaveAllProducts = async () => {
+const fetchAndSaveAllProducts = async (): Promise<ProductSummary[]> => {
   try {
     // Fetching all products from the database
     const products = await Product.find({}).limit(12);
@@ -13,12 +13,13 @@ const fetchAndSaveAllProducts = async () => {
       return [];
     }
 
-    // Optionally, you can map the products to a specific format if needed
+    // Including _id and formatting the response
     const formattedProducts = products.map((product) => ({
+      _id: product._id, // Include the _id field here
       id: product.id,
       title: product.title,
       description: product.description,
-      image: product.image, // Assuming you are saving the first image
+      image: product.image,
       price: product.price,
     }));
 
